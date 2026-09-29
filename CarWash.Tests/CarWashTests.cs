@@ -93,7 +93,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
         // arrange
         const int boxNumber = 1;
         var fromMoment = DateTime.Today.AddHours(8);
-        var expectedFreeTime = DateTime.Today.AddDays(1).AddHours(9).AddMinutes(90);
+        var expectedFreeTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
 
         // act
         var actualFreeTime = fixture.Orders
