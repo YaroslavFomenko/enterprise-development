@@ -9,6 +9,11 @@ namespace CarWash.Domain.Data;
 public static class CarWashDataSeeder
 {
     /// <summary>
+    /// Опорная дата для тестовых данных.
+    /// </summary>
+    public static readonly DateOnly ReferenceDate = new(2026, 6, 15);
+    
+    /// <summary>
     /// Создаёт список услуг.
     /// </summary>
     public static List<Service> GetServices()
@@ -280,7 +285,7 @@ public static class CarWashDataSeeder
             new Car()
             {
                 Id = 11,
-                LicensePlate = "Ф123АВ72",
+                LicensePlate = "Х123АВ72",
                 Brand = "Skoda Octavia",
                 Category = CarCategory.Passenger,
                 ClientId = 1,
@@ -303,8 +308,7 @@ public static class CarWashDataSeeder
     /// </summary>
     public static List<Order> GetOrders(List<Client> clients, List<Service> services, List<Car> cars)
     {
-        var now = DateTime.Now;
-        var today = now.Date;
+        var today = ReferenceDate.ToDateTime(TimeOnly.MinValue);
 
         return
         [

@@ -9,7 +9,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     /// Топ-5 клиентов по количеству посещений.
     /// </summary>
     [Fact]
-    public void GetTop5ClientsByVisits_ShouldReturnOrderedByVisitCount()
+    public void GetTop5ClientsByVisits_WhenOrdersExist_ReturnsOrderedByVisitCount()
     {
         // arrange
         var expectedTop5 = new[]
@@ -38,10 +38,10 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     /// Автомобили на мойке в указанный момент.
     /// </summary>
     [Fact]
-    public void GetCarsInWashAtMoment_ShouldReturnOnlyActiveCars()
+    public void GetCarsInWashAtMoment_WhenMomentSelected_ReturnsOnlyActiveCars()
     {
         // arrange
-        var moment = DateTime.Today.AddHours(9).AddMinutes(5);
+        var moment = fixture.Today.AddHours(9).AddMinutes(5);
         var expectedPlates = new[] { "А123ВС77" };
 
         // act
@@ -59,7 +59,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     /// Топ-5 наиболее популярных услуг.
     /// </summary>
     [Fact]
-    public void GetTop5PopularServices_ShouldReturnOrderedByOrderCount()
+    public void GetTop5PopularServices_WhenOrdersExist_ReturnsOrderedByOrderCount()
     {
         // arrange
         var expectedTop5 = new[]
@@ -88,12 +88,12 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     /// Время освобождения выбранного бокса, начиная с указанного момента.
     /// </summary>
     [Fact]
-    public void GetBoxFreeTime_ShouldReturnEndTimeOfLastOrder()
+    public void GetBoxFreeTime_WhenBoxSelected_ReturnsEndTimeOfLastOrder()
     {
         // arrange
         const int boxNumber = 1;
-        var fromMoment = DateTime.Today.AddHours(8);
-        var expectedFreeTime = DateTime.Today.AddDays(1).AddHours(10).AddMinutes(30);
+        var fromMoment = fixture.Today.AddHours(8);
+        var expectedFreeTime = fixture.Today.AddDays(1).AddHours(10).AddMinutes(30);
 
         // act
         var actualFreeTime = fixture.Orders
@@ -110,7 +110,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     /// Суммарная выручка по каждой услуге.
     /// </summary>
     [Fact]
-    public void GetTotalRevenueByService_ShouldReturnSumOfPrices()
+    public void GetTotalRevenueByService_WhenOrdersExist_ReturnsSumOfPrices()
     {
         // arrange
         var expectedRevenue = new Dictionary<string, decimal>

@@ -5,15 +5,23 @@ namespace CarWash.Domain.Enums;
 /// </summary>
 public enum CarCategory
 {
-    /// <summary>Легковой.</summary>
+    /// <summary>\
+    /// Легковой.
+    /// </summary>
     Passenger = 0,
 
-    /// <summary>Грузовой.</summary>
+    /// <summary>
+    /// Грузовой.
+    /// </summary>
     Truck = 1,
 
-    /// <summary>Внедорожник.</summary>
+    /// <summary>
+    /// Внедорожник.
+    /// </summary>
     Suv = 2,
 
-    /// <summary>Мотоцикл.</summary>
+    /// <summary>
+    /// Мотоцикл.
+    /// </summary>
     Motorcycle = 3,
 }
