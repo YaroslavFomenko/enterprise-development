@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using CarWash.Api.Data;
 using CarWash.Api.Interfaces;
 using CarWash.Api.Services;
 
@@ -7,6 +8,8 @@ WebApplicationBuilder builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers()
     .AddJsonOptions(options => { options.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter()); });
+
+builder.Services.AddSingleton<CarWashDataStore>();
 
 builder.Services.AddSingleton<IServiceService, ServiceService>();
 builder.Services.AddSingleton<IClientService, ClientService>();

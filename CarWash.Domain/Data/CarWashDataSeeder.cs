@@ -4,23 +4,23 @@ using CarWash.Domain.Enums;
 namespace CarWash.Domain.Data;
 
 /// <summary>
-/// Генератор тестовых данных для автомойки.
+///     Генератор тестовых данных для автомойки.
 /// </summary>
 public static class CarWashDataSeeder
 {
     /// <summary>
-    /// Опорная дата для тестовых данных.
+    ///     Опорная дата для тестовых данных.
     /// </summary>
     public static readonly DateOnly ReferenceDate = new(2026, 6, 15);
-    
+
     /// <summary>
-    /// Создаёт список услуг.
+    ///     Создаёт список услуг.
     /// </summary>
     public static List<Service> GetServices()
     {
         return
         [
-            new Service()
+            new Service
             {
                 Id = 1,
                 Name = "Экспресс-мойка",
@@ -28,7 +28,7 @@ public static class CarWashDataSeeder
                 Price = 300,
                 DurationMinutes = 15
             },
-            new Service()
+            new Service
             {
                 Id = 2,
                 Name = "Комплексная мойка",
@@ -36,7 +36,7 @@ public static class CarWashDataSeeder
                 Price = 600,
                 DurationMinutes = 40
             },
-            new Service()
+            new Service
             {
                 Id = 3,
                 Name = "Химчистка салона",
@@ -44,7 +44,7 @@ public static class CarWashDataSeeder
                 Price = 2500,
                 DurationMinutes = 120
             },
-            new Service()
+            new Service
             {
                 Id = 4,
                 Name = "Мойка грузовика",
@@ -52,7 +52,7 @@ public static class CarWashDataSeeder
                 Price = 1500,
                 DurationMinutes = 60
             },
-            new Service()
+            new Service
             {
                 Id = 5,
                 Name = "Полировка кузова",
@@ -60,7 +60,7 @@ public static class CarWashDataSeeder
                 Price = 3000,
                 DurationMinutes = 90
             },
-            new Service()
+            new Service
             {
                 Id = 6,
                 Name = "Мойка внедорожника",
@@ -68,7 +68,7 @@ public static class CarWashDataSeeder
                 Price = 800,
                 DurationMinutes = 45
             },
-            new Service()
+            new Service
             {
                 Id = 7,
                 Name = "Чернение резины",
@@ -76,7 +76,7 @@ public static class CarWashDataSeeder
                 Price = 200,
                 DurationMinutes = 10
             },
-            new Service()
+            new Service
             {
                 Id = 8,
                 Name = "Мойка мотоцикла",
@@ -84,7 +84,7 @@ public static class CarWashDataSeeder
                 Price = 400,
                 DurationMinutes = 20
             },
-            new Service()
+            new Service
             {
                 Id = 9,
                 Name = "Нанесение воска",
@@ -92,107 +92,107 @@ public static class CarWashDataSeeder
                 Price = 1200,
                 DurationMinutes = 50
             },
-            new Service()
+            new Service
             {
                 Id = 10,
                 Name = "Уборка багажника",
                 Category = CarCategory.Passenger,
                 Price = 500,
                 DurationMinutes = 25
-            },
+            }
         ];
     }
 
     /// <summary>
-    /// Создаёт список клиентов.
+    ///     Создаёт список клиентов.
     /// </summary>
     public static List<Client> GetClients()
     {
         return
         [
-            new Client()
+            new Client
             {
                 Id = 1,
                 FullName = "Иванов Иван Иванович",
                 Phone = "+7 (911) 100-00-01"
             },
-            new Client()
+            new Client
             {
                 Id = 2,
                 FullName = "Петров Пётр Петрович",
                 Phone = "+7 (911) 100-00-02"
             },
-            new Client()
+            new Client
             {
                 Id = 3,
                 FullName = "Сидорова Анна Сергеевна",
                 Phone = "+7 (911) 100-00-03"
             },
-            new Client()
+            new Client
             {
                 Id = 4,
                 FullName = "Кузнецов Дмитрий Олегович",
                 Phone = "+7 (911) 100-00-04"
             },
-            new Client()
+            new Client
             {
                 Id = 5,
                 FullName = "Смирнова Елена Владимировна",
                 Phone = "+7 (911) 100-00-05"
             },
-            new Client()
+            new Client
             {
                 Id = 6,
                 FullName = "Новиков Артём Игоревич",
                 Phone = "+7 (911) 100-00-06"
             },
-            new Client()
+            new Client
             {
                 Id = 7,
                 FullName = "Морозова Ольга Николаевна",
                 Phone = "+7 (911) 100-00-07"
             },
-            new Client()
+            new Client
             {
                 Id = 8,
                 FullName = "Волков Сергей Андреевич",
                 Phone = "+7 (911) 100-00-08"
             },
-            new Client()
+            new Client
             {
                 Id = 9,
                 FullName = "Зайцева Татьяна Львовна",
                 Phone = "+7 (911) 100-00-09"
             },
-            new Client()
+            new Client
             {
                 Id = 10,
                 FullName = "Лебедев Максим Викторович",
                 Phone = "+7 (911) 100-00-10"
             },
-            new Client()
+            new Client
             {
                 Id = 11,
                 FullName = "Соколова Ирина Дмитриевна",
                 Phone = "+7 (911) 100-00-11"
             },
-            new Client()
+            new Client
             {
                 Id = 12,
                 FullName = "Павлов Роман Юрьевич",
                 Phone = "+7 (911) 100-00-12"
-            },
+            }
         ];
     }
 
     /// <summary>
-    /// Создаёт список автомобилей.
+    ///     Создаёт список автомобилей.
     /// </summary>
     public static List<Car> GetCars(List<Client> clients)
     {
         return
         [
-            new Car()
+            new Car
             {
                 Id = 1,
                 LicensePlate = "А123ВС77",
@@ -201,7 +201,7 @@ public static class CarWashDataSeeder
                 ClientId = 1,
                 Client = clients[0]
             },
-            new Car()
+            new Car
             {
                 Id = 2,
                 LicensePlate = "В456ЕК99",
@@ -210,7 +210,7 @@ public static class CarWashDataSeeder
                 ClientId = 2,
                 Client = clients[1]
             },
-            new Car()
+            new Car
             {
                 Id = 3,
                 LicensePlate = "С789МН50",
@@ -219,7 +219,7 @@ public static class CarWashDataSeeder
                 ClientId = 3,
                 Client = clients[2]
             },
-            new Car()
+            new Car
             {
                 Id = 4,
                 LicensePlate = "Е012ОР78",
@@ -228,7 +228,7 @@ public static class CarWashDataSeeder
                 ClientId = 4,
                 Client = clients[3]
             },
-            new Car()
+            new Car
             {
                 Id = 5,
                 LicensePlate = "К345ТУ47",
@@ -237,7 +237,7 @@ public static class CarWashDataSeeder
                 ClientId = 5,
                 Client = clients[4]
             },
-            new Car()
+            new Car
             {
                 Id = 6,
                 LicensePlate = "М678ХА23",
@@ -246,7 +246,7 @@ public static class CarWashDataSeeder
                 ClientId = 6,
                 Client = clients[5]
             },
-            new Car()
+            new Car
             {
                 Id = 7,
                 LicensePlate = "Н901СВ64",
@@ -255,7 +255,7 @@ public static class CarWashDataSeeder
                 ClientId = 7,
                 Client = clients[6]
             },
-            new Car()
+            new Car
             {
                 Id = 8,
                 LicensePlate = "Р234УЕ11",
@@ -264,7 +264,7 @@ public static class CarWashDataSeeder
                 ClientId = 8,
                 Client = clients[7]
             },
-            new Car()
+            new Car
             {
                 Id = 9,
                 LicensePlate = "Т567КМ33",
@@ -273,7 +273,7 @@ public static class CarWashDataSeeder
                 ClientId = 9,
                 Client = clients[8]
             },
-            new Car()
+            new Car
             {
                 Id = 10,
                 LicensePlate = "У890МН55",
@@ -282,7 +282,7 @@ public static class CarWashDataSeeder
                 ClientId = 10,
                 Client = clients[9]
             },
-            new Car()
+            new Car
             {
                 Id = 11,
                 LicensePlate = "Х123АВ72",
@@ -291,7 +291,7 @@ public static class CarWashDataSeeder
                 ClientId = 1,
                 Client = clients[0]
             },
-            new Car()
+            new Car
             {
                 Id = 12,
                 LicensePlate = "Х456ВС88",
@@ -299,12 +299,12 @@ public static class CarWashDataSeeder
                 Category = CarCategory.Suv,
                 ClientId = 2,
                 Client = clients[1]
-            },
+            }
         ];
     }
 
     /// <summary>
-    /// Создаёт список заказов.
+    ///     Создаёт список заказов.
     /// </summary>
     public static List<Order> GetOrders(List<Client> clients, List<Service> services, List<Car> cars)
     {
@@ -312,7 +312,7 @@ public static class CarWashDataSeeder
 
         return
         [
-            new Order()
+            new Order
             {
                 Id = 1,
                 Client = clients[0],
@@ -321,7 +321,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(9),
                 BoxNumber = 1
             },
-            new Order()
+            new Order
             {
                 Id = 2,
                 Client = clients[1],
@@ -330,7 +330,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(10),
                 BoxNumber = 2
             },
-            new Order()
+            new Order
             {
                 Id = 3,
                 Client = clients[2],
@@ -339,7 +339,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(11),
                 BoxNumber = 3
             },
-            new Order()
+            new Order
             {
                 Id = 4,
                 Client = clients[3],
@@ -348,7 +348,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(12),
                 BoxNumber = 4
             },
-            new Order()
+            new Order
             {
                 Id = 5,
                 Client = clients[0],
@@ -357,7 +357,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(13),
                 BoxNumber = 1
             },
-            new Order()
+            new Order
             {
                 Id = 6,
                 Client = clients[4],
@@ -366,7 +366,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(14),
                 BoxNumber = 2
             },
-            new Order()
+            new Order
             {
                 Id = 7,
                 Client = clients[5],
@@ -375,7 +375,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(15),
                 BoxNumber = 5
             },
-            new Order()
+            new Order
             {
                 Id = 8,
                 Client = clients[6],
@@ -384,7 +384,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(16),
                 BoxNumber = 1
             },
-            new Order()
+            new Order
             {
                 Id = 9,
                 Client = clients[7],
@@ -393,7 +393,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(17),
                 BoxNumber = 3
             },
-            new Order()
+            new Order
             {
                 Id = 10,
                 Client = clients[8],
@@ -402,7 +402,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddHours(18),
                 BoxNumber = 4
             },
-            new Order()
+            new Order
             {
                 Id = 11,
                 Client = clients[0],
@@ -411,7 +411,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddDays(1).AddHours(9),
                 BoxNumber = 1
             },
-            new Order()
+            new Order
             {
                 Id = 12,
                 Client = clients[9],
@@ -420,7 +420,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddDays(1).AddHours(10),
                 BoxNumber = 2
             },
-            new Order()
+            new Order
             {
                 Id = 13,
                 Client = clients[1],
@@ -429,7 +429,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddDays(-1).AddHours(11),
                 BoxNumber = 1
             },
-            new Order()
+            new Order
             {
                 Id = 14,
                 Client = clients[2],
@@ -438,7 +438,7 @@ public static class CarWashDataSeeder
                 StartTime = today.AddDays(-1).AddHours(12),
                 BoxNumber = 3
             },
-            new Order()
+            new Order
             {
                 Id = 15,
                 Client = clients[10],
@@ -446,7 +446,7 @@ public static class CarWashDataSeeder
                 Car = cars[0],
                 StartTime = today.AddDays(-2).AddHours(13),
                 BoxNumber = 1
-            },
+            }
         ];
     }
 }

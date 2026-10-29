@@ -1,6 +1,6 @@
-﻿using CarWash.Api.Dtos;
+﻿using CarWash.Api.Data;
+using CarWash.Api.Dtos;
 using CarWash.Api.Interfaces;
-using CarWash.Domain.Data;
 using CarWash.Domain.Entities;
 
 namespace CarWash.Api.Services;
@@ -8,17 +8,15 @@ namespace CarWash.Api.Services;
 /// <summary>
 ///     Реализация сервиса для управления автомобилями.
 /// </summary>
-public class CarService(IClientService clientService) : ICarService
+public class CarService(CarWashDataStore store) : ICarService
 {
-    private readonly List<Car> _cars = CarWashDataSeeder.GetCars(CarWashDataSeeder.GetClients());
-
     /// <summary>
     ///     Возвращает список всех автомобилей.
     /// </summary>
     /// <returns>Коллекция автомобилей.</returns>
     public IReadOnlyCollection<CarDto> GetAll()
     {
-        return [.. _cars.Select(ToDto)];
+        return [.. store.Cars.Select(ToDto)];
     }
 
     /// <summary>
@@ -28,7 +26,7 @@ public class CarService(IClientService clientService) : ICarService
     /// <returns>Автомобиль или null, если не найден.</returns>
     public CarDto? GetById(int id)
     {
-        Car? car = _cars.FirstOrDefault(c => c.Id == id);
+        Car? car = store.Cars.FirstOrDefault(c => c.Id == id);
         return car is null ? null : ToDto(car);
     }
 
@@ -39,13 +37,13 @@ public class CarService(IClientService clientService) : ICarService
     /// <returns>Созданный автомобиль.</returns>
     public CarDto Create(CarCreateUpdateDto dto)
     {
-        ClientDto? client = clientService.GetById(dto.ClientId);
+        Client? client = store.Clients.FirstOrDefault(c => c.Id == dto.ClientId);
         if (client is null)
         {
             throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
         }
 
-        var newId = _cars.Count > 0 ? _cars.Max(c => c.Id) + 1 : 1;
+        var newId = store.Cars.Count > 0 ? store.Cars.Max(c => c.Id) + 1 : 1;
         var car = new Car
         {
             Id = newId,
@@ -55,7 +53,7 @@ public class CarService(IClientService clientService) : ICarService
             ClientId = dto.ClientId
         };
 
-        _cars.Add(car);
+        store.Cars.Add(car);
         return ToDto(car);
     }
 
@@ -67,13 +65,13 @@ public class CarService(IClientService clientService) : ICarService
     /// <returns>Обновленный автомобиль.</returns>
     public CarDto Update(int id, CarCreateUpdateDto dto)
     {
-        Car? car = _cars.FirstOrDefault(c => c.Id == id);
+        Car? car = store.Cars.FirstOrDefault(c => c.Id == id);
         if (car is null)
         {
             throw new KeyNotFoundException($"Автомобиль с Id {id} не найден.");
         }
 
-        ClientDto? client = clientService.GetById(dto.ClientId);
+        Client? client = store.Clients.FirstOrDefault(c => c.Id == dto.ClientId);
         if (client is null)
         {
             throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
@@ -94,13 +92,13 @@ public class CarService(IClientService clientService) : ICarService
     /// <returns>True, если удаление успешно, иначе False.</returns>
     public bool Delete(int id)
     {
-        Car? car = _cars.FirstOrDefault(c => c.Id == id);
+        Car? car = store.Cars.FirstOrDefault(c => c.Id == id);
         if (car is null)
         {
             return false;
         }
 
-        return _cars.Remove(car);
+        return store.Cars.Remove(car);
     }
 
     /// <summary>

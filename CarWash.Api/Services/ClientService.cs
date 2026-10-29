@@ -1,6 +1,6 @@
-﻿using CarWash.Api.Dtos;
+﻿using CarWash.Api.Data;
+using CarWash.Api.Dtos;
 using CarWash.Api.Interfaces;
-using CarWash.Domain.Data;
 using CarWash.Domain.Entities;
 
 namespace CarWash.Api.Services;
@@ -8,25 +8,15 @@ namespace CarWash.Api.Services;
 /// <summary>
 ///     Реализация сервиса для управления клиентами.
 /// </summary>
-public class ClientService : IClientService
+public class ClientService(CarWashDataStore store) : IClientService
 {
-    private readonly List<Client> _clients;
-
-    /// <summary>
-    ///     Инициализирует сервис клиентов тестовыми данными.
-    /// </summary>
-    public ClientService()
-    {
-        _clients = CarWashDataSeeder.GetClients();
-    }
-
     /// <summary>
     ///     Возвращает список всех клиентов.
     /// </summary>
     /// <returns>Коллекция клиентов.</returns>
     public IReadOnlyCollection<ClientDto> GetAll()
     {
-        return [.. _clients.Select(ToDto)];
+        return [.. store.Clients.Select(ToDto)];
     }
 
     /// <summary>
@@ -36,7 +26,7 @@ public class ClientService : IClientService
     /// <returns>Клиент или null, если не найден.</returns>
     public ClientDto? GetById(int id)
     {
-        Client? client = _clients.FirstOrDefault(c => c.Id == id);
+        Client? client = store.Clients.FirstOrDefault(c => c.Id == id);
         return client is null ? null : ToDto(client);
     }
 
@@ -47,7 +37,7 @@ public class ClientService : IClientService
     /// <returns>Созданный клиент.</returns>
     public ClientDto Create(ClientCreateUpdateDto dto)
     {
-        var newId = _clients.Count > 0 ? _clients.Max(c => c.Id) + 1 : 1;
+        var newId = store.Clients.Count > 0 ? store.Clients.Max(c => c.Id) + 1 : 1;
 
         var client = new Client
         {
@@ -56,7 +46,7 @@ public class ClientService : IClientService
             Phone = dto.Phone
         };
 
-        _clients.Add(client);
+        store.Clients.Add(client);
         return ToDto(client);
     }
 
@@ -68,7 +58,7 @@ public class ClientService : IClientService
     /// <returns>Обновленный клиент.</returns>
     public ClientDto Update(int id, ClientCreateUpdateDto dto)
     {
-        Client? client = _clients.FirstOrDefault(c => c.Id == id);
+        Client? client = store.Clients.FirstOrDefault(c => c.Id == id);
         if (client is null)
         {
             throw new KeyNotFoundException($"Клиент с Id {id} не найден.");
@@ -86,13 +76,13 @@ public class ClientService : IClientService
     /// <returns>True, если удаление успешно, иначе False.</returns>
     public bool Delete(int id)
     {
-        Client? client = _clients.FirstOrDefault(c => c.Id == id);
+        Client? client = store.Clients.FirstOrDefault(c => c.Id == id);
         if (client is null)
         {
             return false;
         }
 
-        return _clients.Remove(client);
+        return store.Clients.Remove(client);
     }
 
     /// <summary>
