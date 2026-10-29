@@ -4,6 +4,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarWash.Domain", "CarWash.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarWash.Tests", "CarWash.Tests\CarWash.Tests.csproj", "{6FFF4E22-CBA1-483C-860B-99C39B994708}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarWash.Api", "CarWash.Api\CarWash.Api.csproj", "{B29AF5F7-97DF-4107-8480-D765E7F82EA8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -18,5 +20,9 @@ Global
 		{6FFF4E22-CBA1-483C-860B-99C39B994708}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6FFF4E22-CBA1-483C-860B-99C39B994708}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6FFF4E22-CBA1-483C-860B-99C39B994708}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B29AF5F7-97DF-4107-8480-D765E7F82EA8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B29AF5F7-97DF-4107-8480-D765E7F82EA8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B29AF5F7-97DF-4107-8480-D765E7F82EA8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B29AF5F7-97DF-4107-8480-D765E7F82EA8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
