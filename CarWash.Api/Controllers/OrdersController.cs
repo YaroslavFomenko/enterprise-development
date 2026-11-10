@@ -1,18 +1,18 @@
-﻿using CarWash.Api.Dtos;
-using CarWash.Api.Interfaces;
+﻿using CarWash.Application.Contracts.Dtos;
+using CarWash.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWash.Api.Controllers;
 
 /// <summary>
-///     Контроллер для управления заказами автомойки.
+/// Контроллер для управления заказами автомойки.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class OrdersController(IOrderService orderService, ILogger<OrdersController> logger) : ControllerBase
+public class OrdersController(IOrderService service, ILogger<OrdersController> logger) : ControllerBase
 {
     /// <summary>
-    ///     Возвращает список всех заказов.
+    /// Возвращает список всех заказов.
     /// </summary>
     /// <returns>Коллекция заказов.</returns>
     [HttpGet]
@@ -23,7 +23,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
         try
         {
             logger.LogInformation("Запрос на получение всех заказов.");
-            return Ok(orderService.GetAll());
+            return Ok(service.GetAll());
         }
         catch (Exception ex)
         {
@@ -33,7 +33,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     }
 
     /// <summary>
-    ///     Возвращает заказ по идентификатору.
+    /// Возвращает заказ по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор заказа.</param>
     /// <returns>Заказ или 404, если не найден.</returns>
@@ -45,11 +45,9 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     {
         try
         {
-            OrderDto? order = orderService.GetById(id);
+            var order = service.GetById(id);
             if (order is null)
-            {
                 return NotFound(new { message = $"Заказ с Id {id} не найден." });
-            }
 
             return Ok(order);
         }
@@ -61,7 +59,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     }
 
     /// <summary>
-    ///     Создает новый заказ.
+    /// Создает новый заказ.
     /// </summary>
     /// <param name="dto">Данные нового заказа.</param>
     /// <returns>Созданный заказ.</returns>
@@ -73,7 +71,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     {
         try
         {
-            OrderDto created = orderService.Create(dto);
+            var created = service.Create(dto);
             logger.LogInformation("Создан заказ с Id {Id}.", created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -90,7 +88,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     }
 
     /// <summary>
-    ///     Обновляет существующий заказ.
+    /// Обновляет существующий заказ.
     /// </summary>
     /// <param name="id">Идентификатор заказа.</param>
     /// <param name="dto">Новые данные заказа.</param>
@@ -104,7 +102,7 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     {
         try
         {
-            OrderDto updated = orderService.Update(id, dto);
+            var updated = service.Update(id, dto);
             logger.LogInformation("Обновлен заказ с Id {Id}.", id);
             return Ok(updated);
         }
@@ -126,24 +124,18 @@ public class OrdersController(IOrderService orderService, ILogger<OrdersControll
     }
 
     /// <summary>
-    ///     Удаляет заказ.
+    /// Удаляет заказ.
     /// </summary>
     /// <param name="id">Идентификатор заказа.</param>
-    /// <returns>204, если удалено, иначе 404.</returns>
+    /// <returns>204 No Content.</returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Delete(int id)
     {
         try
         {
-            var deleted = orderService.Delete(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"Заказ с Id {id} не найден." });
-            }
-
+            service.Delete(id);
             logger.LogInformation("Удален заказ с Id {Id}.", id);
             return NoContent();
         }

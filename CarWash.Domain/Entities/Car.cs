@@ -1,11 +1,12 @@
 using CarWash.Domain.Enums;
+using CarWash.Domain.Interfaces;
 
 namespace CarWash.Domain.Entities;
 
 /// <summary>
 /// Автомобиль клиента.
 /// </summary>
-public class Car
+public class Car : IEntity
 {
     /// <summary>
     /// Идентификатор.
@@ -32,8 +33,8 @@ public class Car
     /// </summary>
     public int ClientId { get; set; }
 
-    ///
-    /// <summary>Владелец автомобиля.
+    /// <summary>
+    /// Владелец автомобиля.
     /// </summary>
     public Client? Client { get; set; }
 }

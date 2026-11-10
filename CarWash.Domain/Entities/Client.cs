@@ -1,9 +1,11 @@
+using CarWash.Domain.Interfaces;
+
 namespace CarWash.Domain.Entities;
 
 /// <summary>
 /// Клиент автомойки.
 /// </summary>
-public class Client
+public class Client : IEntity
 {
     /// <summary>
     /// Идентификатор.

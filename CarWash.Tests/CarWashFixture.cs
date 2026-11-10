@@ -9,10 +9,22 @@ namespace CarWash.Tests;
 public class CarWashFixture
 {
     /// <summary>
+    /// Инициализирует тестовые данные.
+    /// </summary>
+    public CarWashFixture()
+    {
+        Today = CarWashDataSeeder.ReferenceDate.ToDateTime(TimeOnly.MinValue);
+        Services = CarWashDataSeeder.GetServices();
+        Clients = CarWashDataSeeder.GetClients();
+        Cars = CarWashDataSeeder.GetCars(Clients);
+        Orders = CarWashDataSeeder.GetOrders(Clients, Services, Cars);
+    }
+
+    /// <summary>
     /// Опорная дата для тестов.
     /// </summary>
     public DateTime Today { get; }
-    
+
     /// <summary>
     /// Услуги.
     /// </summary>
@@ -32,16 +44,4 @@ public class CarWashFixture
     /// Заказы.
     /// </summary>
     public List<Order> Orders { get; }
-
-    /// <summary>
-    /// Инициализирует тестовые данные.
-    /// </summary>
-    public CarWashFixture()
-    {
-        Today = CarWashDataSeeder.ReferenceDate.ToDateTime(TimeOnly.MinValue);
-        Services = CarWashDataSeeder.GetServices();
-        Clients = CarWashDataSeeder.GetClients();
-        Cars = CarWashDataSeeder.GetCars(Clients);
-        Orders = CarWashDataSeeder.GetOrders(Clients, Services, Cars);
-    }
 }

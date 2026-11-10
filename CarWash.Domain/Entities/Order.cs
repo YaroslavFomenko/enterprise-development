@@ -1,9 +1,11 @@
+using CarWash.Domain.Interfaces;
+
 namespace CarWash.Domain.Entities;
 
 /// <summary>
 /// Заказ на обслуживание автомобиля.
 /// </summary>
-public class Order
+public class Order : IEntity
 {
     /// <summary>
     /// Идентификатор.

@@ -4,17 +4,17 @@ using CarWash.Domain.Enums;
 namespace CarWash.Domain.Data;
 
 /// <summary>
-///     Генератор тестовых данных для автомойки.
+/// Генератор тестовых данных для автомойки.
 /// </summary>
 public static class CarWashDataSeeder
 {
     /// <summary>
-    ///     Опорная дата для тестовых данных.
+    /// Опорная дата для тестовых данных.
     /// </summary>
     public static readonly DateOnly ReferenceDate = new(2026, 6, 15);
 
     /// <summary>
-    ///     Создаёт список услуг.
+    /// Создаёт список услуг.
     /// </summary>
     public static List<Service> GetServices()
     {
@@ -104,7 +104,7 @@ public static class CarWashDataSeeder
     }
 
     /// <summary>
-    ///     Создаёт список клиентов.
+    /// Создаёт список клиентов.
     /// </summary>
     public static List<Client> GetClients()
     {
@@ -186,7 +186,7 @@ public static class CarWashDataSeeder
     }
 
     /// <summary>
-    ///     Создаёт список автомобилей.
+    /// Создаёт список автомобилей.
     /// </summary>
     public static List<Car> GetCars(List<Client> clients)
     {
@@ -304,7 +304,7 @@ public static class CarWashDataSeeder
     }
 
     /// <summary>
-    ///     Создаёт список заказов.
+    /// Создаёт список заказов.
     /// </summary>
     public static List<Order> GetOrders(List<Client> clients, List<Service> services, List<Car> cars)
     {

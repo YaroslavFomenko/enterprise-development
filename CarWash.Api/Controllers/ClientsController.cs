@@ -1,18 +1,18 @@
-﻿using CarWash.Api.Dtos;
-using CarWash.Api.Interfaces;
+﻿using CarWash.Application.Contracts.Dtos;
+using CarWash.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWash.Api.Controllers;
 
 /// <summary>
-///     Контроллер для управления клиентами автомойки.
+/// Контроллер для управления клиентами автомойки.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ClientsController(IClientService clientService, ILogger<ClientsController> logger) : ControllerBase
+public class ClientsController(IClientService service, ILogger<ClientsController> logger) : ControllerBase
 {
     /// <summary>
-    ///     Возвращает список всех клиентов.
+    /// Возвращает список всех клиентов.
     /// </summary>
     /// <returns>Коллекция клиентов.</returns>
     [HttpGet]
@@ -23,7 +23,7 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
         try
         {
             logger.LogInformation("Запрос на получение списка клиентов.");
-            return Ok(clientService.GetAll());
+            return Ok(service.GetAll());
         }
         catch (Exception ex)
         {
@@ -33,7 +33,7 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     }
 
     /// <summary>
-    ///     Возвращает клиента по идентификатору.
+    /// Возвращает клиента по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор клиента.</param>
     /// <returns>Клиент или 404, если не найден.</returns>
@@ -45,11 +45,9 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     {
         try
         {
-            ClientDto? client = clientService.GetById(id);
+            var client = service.GetById(id);
             if (client is null)
-            {
                 return NotFound(new { message = $"Клиент с Id {id} не найден." });
-            }
 
             return Ok(client);
         }
@@ -61,7 +59,7 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     }
 
     /// <summary>
-    ///     Создает нового клиента.
+    /// Создает нового клиента.
     /// </summary>
     /// <param name="dto">Данные нового клиента.</param>
     /// <returns>Созданный клиент.</returns>
@@ -73,7 +71,7 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     {
         try
         {
-            ClientDto created = clientService.Create(dto);
+            var created = service.Create(dto);
             logger.LogInformation("Создан клиент с Id {Id}.", created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -90,7 +88,7 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     }
 
     /// <summary>
-    ///     Обновляет существующего клиента.
+    /// Обновляет существующего клиента.
     /// </summary>
     /// <param name="id">Идентификатор клиента.</param>
     /// <param name="dto">Новые данные клиента.</param>
@@ -104,7 +102,7 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     {
         try
         {
-            ClientDto updated = clientService.Update(id, dto);
+            var updated = service.Update(id, dto);
             logger.LogInformation("Обновлен клиент с Id {Id}.", id);
             return Ok(updated);
         }
@@ -126,24 +124,18 @@ public class ClientsController(IClientService clientService, ILogger<ClientsCont
     }
 
     /// <summary>
-    ///     Удаляет клиента.
+    /// Удаляет клиента.
     /// </summary>
     /// <param name="id">Идентификатор клиента.</param>
-    /// <returns>204, если удалено, иначе 404.</returns>
+    /// <returns>204 No Content.</returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Delete(int id)
     {
         try
         {
-            var deleted = clientService.Delete(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"Клиент с Id {id} не найден." });
-            }
-
+            service.Delete(id);
             logger.LogInformation("Удален клиент с Id {Id}.", id);
             return NoContent();
         }

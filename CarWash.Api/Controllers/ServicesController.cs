@@ -1,18 +1,18 @@
-﻿using CarWash.Api.Dtos;
-using CarWash.Api.Interfaces;
+﻿using CarWash.Application.Contracts.Dtos;
+using CarWash.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWash.Api.Controllers;
 
 /// <summary>
-///     Контроллер для управления услугами автомойки.
+/// Контроллер для управления услугами автомойки.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class ServicesController(IServiceService serviceService, ILogger<ServicesController> logger) : ControllerBase
+public class ServicesController(IServiceService service, ILogger<ServicesController> logger) : ControllerBase
 {
     /// <summary>
-    ///     Возвращает список всех услуг.
+    /// Возвращает список всех услуг.
     /// </summary>
     /// <returns>Коллекция услуг.</returns>
     [HttpGet]
@@ -23,7 +23,7 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
         try
         {
             logger.LogInformation("Запрос на получение всех услуг.");
-            return Ok(serviceService.GetAll());
+            return Ok(service.GetAll());
         }
         catch (Exception ex)
         {
@@ -33,7 +33,7 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     }
 
     /// <summary>
-    ///     Возвращает услугу по идентификатору.
+    /// Возвращает услугу по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор услуги.</param>
     /// <returns>Услуга или 404, если не найдена.</returns>
@@ -45,13 +45,11 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     {
         try
         {
-            ServiceDto? service = serviceService.GetById(id);
-            if (service is null)
-            {
+            var serviceDto = service.GetById(id);
+            if (serviceDto is null)
                 return NotFound(new { message = $"Услуга с Id {id} не найдена." });
-            }
 
-            return Ok(service);
+            return Ok(serviceDto);
         }
         catch (Exception ex)
         {
@@ -61,7 +59,7 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     }
 
     /// <summary>
-    ///     Создает новую услугу.
+    /// Создает новую услугу.
     /// </summary>
     /// <param name="dto">Данные новой услуги.</param>
     /// <returns>Созданная услуга.</returns>
@@ -73,7 +71,7 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     {
         try
         {
-            ServiceDto created = serviceService.Create(dto);
+            var created = service.Create(dto);
             logger.LogInformation("Создана услуга с Id {Id}.", created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -90,7 +88,7 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     }
 
     /// <summary>
-    ///     Обновляет существующую услугу.
+    /// Обновляет существующую услугу.
     /// </summary>
     /// <param name="id">Идентификатор услуги.</param>
     /// <param name="dto">Новые данные услуги.</param>
@@ -104,7 +102,7 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     {
         try
         {
-            ServiceDto updated = serviceService.Update(id, dto);
+            var updated = service.Update(id, dto);
             logger.LogInformation("Обновлена услуга с Id {Id}.", id);
             return Ok(updated);
         }
@@ -126,24 +124,18 @@ public class ServicesController(IServiceService serviceService, ILogger<Services
     }
 
     /// <summary>
-    ///     Удаляет услугу.
+    /// Удаляет услугу.
     /// </summary>
     /// <param name="id">Идентификатор услуги.</param>
-    /// <returns>204, если удалено, иначе 404.</returns>
+    /// <returns>204 No Content.</returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Delete(int id)
     {
         try
         {
-            var deleted = serviceService.Delete(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"Услуга с Id {id} не найдена." });
-            }
-
+            service.Delete(id);
             logger.LogInformation("Удалена услуга с Id {Id}.", id);
             return NoContent();
         }

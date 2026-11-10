@@ -1,11 +1,12 @@
 using CarWash.Domain.Enums;
+using CarWash.Domain.Interfaces;
 
 namespace CarWash.Domain.Entities;
 
 /// <summary>
 /// Услуга автомойки.
 /// </summary>
-public class Service
+public class Service : IEntity
 {
     /// <summary>
     /// Идентификатор.

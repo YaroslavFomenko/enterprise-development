@@ -10,15 +10,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <PackageReference Include="xunit.v3" Version="4.0.1" />
+        <PackageReference Include="xunit.v3" Version="4.0.1"/>
     </ItemGroup>
 
     <ItemGroup>
-        <Using Include="Xunit" />
+        <Using Include="Xunit"/>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\CarWash.Domain\CarWash.Domain.csproj" />
+        <ProjectReference Include="..\CarWash.Domain\CarWash.Domain.csproj"/>
     </ItemGroup>
 
 </Project>

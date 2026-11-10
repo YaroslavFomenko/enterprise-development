@@ -1,18 +1,18 @@
-﻿using CarWash.Api.Dtos;
-using CarWash.Api.Interfaces;
+﻿using CarWash.Application.Contracts.Dtos;
+using CarWash.Application.Contracts.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CarWash.Api.Controllers;
 
 /// <summary>
-///     Контроллер для управления автомобилями.
+/// Контроллер для управления автомобилями.
 /// </summary>
 [ApiController]
 [Route("api/[controller]")]
-public class CarsController(ICarService carService, ILogger<CarsController> logger) : ControllerBase
+public class CarsController(ICarService service, ILogger<CarsController> logger) : ControllerBase
 {
     /// <summary>
-    ///     Возвращает список всех автомобилей.
+    /// Возвращает список всех автомобилей.
     /// </summary>
     /// <returns>Коллекция автомобилей.</returns>
     [HttpGet]
@@ -23,7 +23,7 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
         try
         {
             logger.LogInformation("Запрос на получение всех автомобилей.");
-            return Ok(carService.GetAll());
+            return Ok(service.GetAll());
         }
         catch (Exception ex)
         {
@@ -33,7 +33,7 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     }
 
     /// <summary>
-    ///     Возвращает автомобиль по идентификатору.
+    /// Возвращает автомобиль по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор автомобиля.</param>
     /// <returns>Автомобиль или 404, если не найден.</returns>
@@ -45,11 +45,9 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     {
         try
         {
-            CarDto? car = carService.GetById(id);
+            var car = service.GetById(id);
             if (car is null)
-            {
                 return NotFound(new { message = $"Автомобиль с Id {id} не найден." });
-            }
 
             return Ok(car);
         }
@@ -61,7 +59,7 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     }
 
     /// <summary>
-    ///     Создает новый автомобиль.
+    /// Создает новый автомобиль.
     /// </summary>
     /// <param name="dto">Данные нового автомобиля.</param>
     /// <returns>Созданный автомобиль.</returns>
@@ -73,7 +71,7 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     {
         try
         {
-            CarDto created = carService.Create(dto);
+            var created = service.Create(dto);
             logger.LogInformation("Создан автомобиль с Id {Id}.", created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -90,7 +88,7 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     }
 
     /// <summary>
-    ///     Обновляет существующий автомобиль.
+    /// Обновляет существующий автомобиль.
     /// </summary>
     /// <param name="id">Идентификатор автомобиля.</param>
     /// <param name="dto">Новые данные автомобиля.</param>
@@ -104,7 +102,7 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     {
         try
         {
-            CarDto updated = carService.Update(id, dto);
+            var updated = service.Update(id, dto);
             logger.LogInformation("Обновлен автомобиль с Id {Id}.", id);
             return Ok(updated);
         }
@@ -126,24 +124,18 @@ public class CarsController(ICarService carService, ILogger<CarsController> logg
     }
 
     /// <summary>
-    ///     Удаляет автомобиль.
+    /// Удаляет автомобиль.
     /// </summary>
     /// <param name="id">Идентификатор автомобиля.</param>
-    /// <returns>204, если удалено, иначе 404.</returns>
+    /// <returns>204 No Content.</returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
     public IActionResult Delete(int id)
     {
         try
         {
-            var deleted = carService.Delete(id);
-            if (!deleted)
-            {
-                return NotFound(new { message = $"Автомобиль с Id {id} не найден." });
-            }
-
+            service.Delete(id);
             logger.LogInformation("Удален автомобиль с Id {Id}.", id);
             return NoContent();
         }

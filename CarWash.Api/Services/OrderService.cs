@@ -1,66 +1,55 @@
-﻿using CarWash.Api.Data;
-using CarWash.Api.Dtos;
-using CarWash.Api.Interfaces;
+﻿using CarWash.Application.Contracts.Dtos;
+using CarWash.Application.Contracts.Interfaces;
+using CarWash.Application.Contracts.Repositories;
 using CarWash.Domain.Entities;
 
 namespace CarWash.Api.Services;
 
 /// <summary>
-///     Реализация сервиса для управления заказами.
+/// Реализация сервиса для управления заказами.
 /// </summary>
-public class OrderService(CarWashDataStore store) : IOrderService
+public class OrderService(
+    IOrderRepository orderRepository,
+    IClientRepository clientRepository,
+    ICarRepository carRepository,
+    IServiceRepository serviceRepository) : IOrderService
 {
     /// <summary>
-    ///     Возвращает список всех заказов.
+    /// Возвращает список всех заказов.
     /// </summary>
     /// <returns>Коллекция заказов.</returns>
     public IReadOnlyCollection<OrderDto> GetAll()
     {
-        return [.. store.Orders.Select(ToDto)];
+        return [.. orderRepository.GetAll().Select(ToDto)];
     }
 
     /// <summary>
-    ///     Возвращает заказ по идентификатору.
+    /// Возвращает заказ по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор заказа.</param>
     /// <returns>Заказ или null, если не найден.</returns>
     public OrderDto? GetById(int id)
     {
-        Order? order = store.Orders.FirstOrDefault(o => o.Id == id);
+        var order = orderRepository.GetById(id);
         return order is null ? null : ToDto(order);
     }
 
     /// <summary>
-    ///     Создает новый заказ.
+    /// Создает новый заказ.
     /// </summary>
     /// <param name="dto">Данные нового заказа.</param>
     /// <returns>Созданный заказ.</returns>
     public OrderDto Create(OrderCreateUpdateDto dto)
     {
-        Client? client = store.Clients.FirstOrDefault(c => c.Id == dto.ClientId);
-        Car? car = store.Cars.FirstOrDefault(c => c.Id == dto.CarId);
-        Service? service = store.Services.FirstOrDefault(s => s.Id == dto.ServiceId);
-
-        if (client is null)
-        {
-            throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
-        }
-
-        if (car is null)
-        {
-            throw new ArgumentException($"Автомобиль с Id {dto.CarId} не найден.");
-        }
-
-        if (service is null)
-        {
-            throw new ArgumentException($"Услуга с Id {dto.ServiceId} не найдена.");
-        }
-
-        var newId = store.Orders.Count > 0 ? store.Orders.Max(o => o.Id) + 1 : 1;
+        var client = clientRepository.GetById(dto.ClientId) 
+            ?? throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
+        var car = carRepository.GetById(dto.CarId) 
+            ?? throw new ArgumentException($"Автомобиль с Id {dto.CarId} не найден.");
+        var service = serviceRepository.GetById(dto.ServiceId) 
+            ?? throw new ArgumentException($"Услуга с Id {dto.ServiceId} не найдена.");
 
         var order = new Order
         {
-            Id = newId,
             Client = client,
             Service = service,
             Car = car,
@@ -68,42 +57,27 @@ public class OrderService(CarWashDataStore store) : IOrderService
             BoxNumber = dto.BoxNumber
         };
 
-        store.Orders.Add(order);
-        return ToDto(order);
+        var created = orderRepository.Add(order);
+        return ToDto(created);
     }
 
     /// <summary>
-    ///     Обновляет существующий заказ.
+    /// Обновляет существующий заказ.
     /// </summary>
     /// <param name="id">Идентификатор заказа.</param>
     /// <param name="dto">Новые данные заказа.</param>
     /// <returns>Обновленный заказ.</returns>
     public OrderDto Update(int id, OrderCreateUpdateDto dto)
     {
-        Order? order = store.Orders.FirstOrDefault(o => o.Id == id);
-        if (order is null)
-        {
-            throw new KeyNotFoundException($"Заказ с Id {id} не найден.");
-        }
+        var order = orderRepository.GetById(id) 
+            ?? throw new KeyNotFoundException($"Заказ с Id {id} не найден.");
 
-        Client? client = store.Clients.FirstOrDefault(c => c.Id == dto.ClientId);
-        Car? car = store.Cars.FirstOrDefault(c => c.Id == dto.CarId);
-        Service? service = store.Services.FirstOrDefault(s => s.Id == dto.ServiceId);
-
-        if (client is null)
-        {
-            throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
-        }
-
-        if (car is null)
-        {
-            throw new ArgumentException($"Автомобиль с Id {dto.CarId} не найден.");
-        }
-
-        if (service is null)
-        {
-            throw new ArgumentException($"Услуга с Id {dto.ServiceId} не найдена.");
-        }
+        var client = clientRepository.GetById(dto.ClientId) 
+            ?? throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
+        var car = carRepository.GetById(dto.CarId) 
+            ?? throw new ArgumentException($"Автомобиль с Id {dto.CarId} не найден.");
+        var service = serviceRepository.GetById(dto.ServiceId) 
+            ?? throw new ArgumentException($"Услуга с Id {dto.ServiceId} не найдена.");
 
         order.Client = client;
         order.Service = service;
@@ -111,27 +85,22 @@ public class OrderService(CarWashDataStore store) : IOrderService
         order.StartTime = dto.StartTime;
         order.BoxNumber = dto.BoxNumber;
 
+        orderRepository.Update(order);
         return ToDto(order);
     }
 
     /// <summary>
-    ///     Удаляет заказ.
+    /// Удаляет заказ.
     /// </summary>
     /// <param name="id">Идентификатор заказа.</param>
     /// <returns>True, если удаление успешно, иначе False.</returns>
     public bool Delete(int id)
     {
-        Order? order = store.Orders.FirstOrDefault(o => o.Id == id);
-        if (order is null)
-        {
-            return false;
-        }
-
-        return store.Orders.Remove(order);
+        return orderRepository.Delete(id);
     }
 
     /// <summary>
-    ///     Преобразует сущность заказа в DTO.
+    /// Преобразует сущность заказа в DTO.
     /// </summary>
     /// <param name="o">Сущность заказа.</param>
     /// <returns>DTO заказа.</returns>

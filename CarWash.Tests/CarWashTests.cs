@@ -41,7 +41,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     public void GetCarsInWashAtMoment_WhenMomentSelected_ReturnsOnlyActiveCars()
     {
         // arrange
-        var moment = fixture.Today.AddHours(9).AddMinutes(5);
+        DateTime moment = fixture.Today.AddHours(9).AddMinutes(5);
         var expectedPlates = new[] { "А123ВС77" };
 
         // act
@@ -83,7 +83,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
         // assert
         Assert.Equal(expectedTop5, actualTop5);
     }
-    
+
     /// <summary>
     /// Время освобождения выбранного бокса, начиная с указанного момента.
     /// </summary>
@@ -92,11 +92,11 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
     {
         // arrange
         const int boxNumber = 1;
-        var fromMoment = fixture.Today.AddHours(8);
-        var expectedFreeTime = fixture.Today.AddDays(1).AddHours(10).AddMinutes(30);
+        DateTime fromMoment = fixture.Today.AddHours(8);
+        DateTime expectedFreeTime = fixture.Today.AddDays(1).AddHours(10).AddMinutes(30);
 
         // act
-        var actualFreeTime = fixture.Orders
+        DateTime actualFreeTime = fixture.Orders
             .Where(o => o.BoxNumber == boxNumber && o.StartTime >= fromMoment)
             .OrderByDescending(o => o.StartTime)
             .Select(o => o.StartTime.AddMinutes(o.Service.DurationMinutes))
@@ -105,7 +105,7 @@ public class CarWashTests(CarWashFixture fixture) : IClassFixture<CarWashFixture
         // assert
         Assert.Equal(expectedFreeTime, actualFreeTime);
     }
-    
+
     /// <summary>
     /// Суммарная выручка по каждой услуге.
     /// </summary>
