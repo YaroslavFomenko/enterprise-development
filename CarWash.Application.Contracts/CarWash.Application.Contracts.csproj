@@ -10,8 +10,4 @@
         <ProjectReference Include="..\CarWash.Domain\CarWash.Domain.csproj"/>
     </ItemGroup>
 
-    <ItemGroup>
-        <Content Include="CarWash.sln"/>
-    </ItemGroup>
-
 </Project>
