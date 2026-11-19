@@ -2,7 +2,7 @@
 using CarWash.Domain.Data;
 using CarWash.Domain.Entities;
 
-namespace CarWash.Api.Infrastructure.Repositories;
+namespace CarWash.Infrastructure.InMemory.Repositories;
 
 /// <summary>
 /// Репозиторий клиентов в памяти.
