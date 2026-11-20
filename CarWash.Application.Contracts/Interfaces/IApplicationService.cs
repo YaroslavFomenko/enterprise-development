@@ -11,25 +11,25 @@ public interface IApplicationService<TDto, in TCreateUpdateDto, in TKey>
     /// <summary>
     /// Возвращает все записи.
     /// </summary>
-    public IReadOnlyCollection<TDto> GetAll();
+    public Task<IReadOnlyCollection<TDto>> GetAllAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Возвращает запись по идентификатору.
     /// </summary>
-    public TDto? GetById(TKey id);
+    public Task<TDto?> GetByIdAsync(TKey id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Создает новую запись.
     /// </summary>
-    public TDto Create(TCreateUpdateDto dto);
+    public Task<TDto> CreateAsync(TCreateUpdateDto dto, CancellationToken cancellationToken);
 
     /// <summary>
     /// Обновляет запись.
     /// </summary>
-    public TDto Update(TKey id, TCreateUpdateDto dto);
+    public Task<TDto> UpdateAsync(TKey id, TCreateUpdateDto dto, CancellationToken cancellationToken);
 
     /// <summary>
     /// Удаляет запись.
     /// </summary>
-    public bool Delete(TKey id);
+    public Task<bool> DeleteAsync(TKey id, CancellationToken cancellationToken);
 }

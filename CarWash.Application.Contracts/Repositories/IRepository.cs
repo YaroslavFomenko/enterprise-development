@@ -1,35 +1,33 @@
-﻿using CarWash.Domain.Interfaces;
-
-namespace CarWash.Application.Contracts.Repositories;
+﻿namespace CarWash.Application.Contracts.Repositories;
 
 /// <summary>
 /// Общий интерфейс для работы с хранилищем сущностей.
 /// </summary>
 /// <typeparam name="T">Тип сущности.</typeparam>
-public interface IRepository<T> where T : class, IEntity
+public interface IRepository<T> where T : class
 {
     /// <summary>
     /// Возвращает все сущности.
     /// </summary>
-    public IReadOnlyCollection<T> GetAll();
+    public Task<IReadOnlyCollection<T>> GetAllAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Возвращает сущность по идентификатору.
     /// </summary>
-    public T? GetById(int id);
+    public Task<T?> GetByIdAsync(int id, CancellationToken cancellationToken);
 
     /// <summary>
     /// Добавляет новую сущность.
     /// </summary>
-    public T Add(T entity);
+    public Task<T> AddAsync(T entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Обновляет сущность.
     /// </summary>
-    public T Update(T entity);
+    public Task<bool> UpdateAsync(T entity, CancellationToken cancellationToken);
 
     /// <summary>
     /// Удаляет сущность.
     /// </summary>
-    public bool Delete(int id);
+    public Task<bool> DeleteAsync(int id, CancellationToken cancellationToken);
 }

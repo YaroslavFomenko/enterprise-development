@@ -3,7 +3,7 @@ using CarWash.Application.Contracts.Interfaces;
 using CarWash.Application.Contracts.Repositories;
 using CarWash.Domain.Entities;
 
-namespace CarWash.Api.Services;
+namespace CarWash.Application.Services;
 
 /// <summary>
 /// Реализация сервиса для управления автомобилями.
@@ -13,31 +13,27 @@ public class CarService(ICarRepository carRepository, IClientRepository clientRe
     /// <summary>
     /// Возвращает список всех автомобилей.
     /// </summary>
-    /// <returns>Коллекция автомобилей.</returns>
-    public IReadOnlyCollection<CarDto> GetAll()
+    public async Task<IReadOnlyCollection<CarDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return [.. carRepository.GetAll().Select(ToDto)];
+        var cars = await carRepository.GetAllAsync(cancellationToken);
+        return [.. cars.Select(ToDto)];
     }
 
     /// <summary>
     /// Возвращает автомобиль по идентификатору.
     /// </summary>
-    /// <param name="id">Идентификатор автомобиля.</param>
-    /// <returns>Автомобиль или null, если не найден.</returns>
-    public CarDto? GetById(int id)
+    public async Task<CarDto?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var car = carRepository.GetById(id);
+        var car = await carRepository.GetByIdAsync(id, cancellationToken);
         return car is null ? null : ToDto(car);
     }
 
     /// <summary>
     /// Создает новый автомобиль.
     /// </summary>
-    /// <param name="dto">Данные нового автомобиля.</param>
-    /// <returns>Созданный автомобиль.</returns>
-    public CarDto Create(CarCreateUpdateDto dto)
+    public async Task<CarDto> CreateAsync(CarCreateUpdateDto dto, CancellationToken cancellationToken)
     {
-        var client = clientRepository.GetById(dto.ClientId) 
+        var client = await clientRepository.GetByIdAsync(dto.ClientId, cancellationToken)
             ?? throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
 
         var car = new Car
@@ -49,22 +45,19 @@ public class CarService(ICarRepository carRepository, IClientRepository clientRe
             Client = client
         };
 
-        var created = carRepository.Add(car);
+        var created = await carRepository.AddAsync(car, cancellationToken);
         return ToDto(created);
     }
 
     /// <summary>
     /// Обновляет существующий автомобиль.
     /// </summary>
-    /// <param name="id">Идентификатор автомобиля.</param>
-    /// <param name="dto">Новые данные автомобиля.</param>
-    /// <returns>Обновленный автомобиль.</returns>
-    public CarDto Update(int id, CarCreateUpdateDto dto)
+    public async Task<CarDto> UpdateAsync(int id, CarCreateUpdateDto dto, CancellationToken cancellationToken)
     {
-        var car = carRepository.GetById(id) 
+        var car = await carRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Автомобиль с Id {id} не найден.");
 
-        var client = clientRepository.GetById(dto.ClientId) 
+        var client = await clientRepository.GetByIdAsync(dto.ClientId, cancellationToken)
             ?? throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
 
         car.LicensePlate = dto.LicensePlate;
@@ -73,25 +66,18 @@ public class CarService(ICarRepository carRepository, IClientRepository clientRe
         car.ClientId = dto.ClientId;
         car.Client = client;
 
-        carRepository.Update(car);
+        await carRepository.UpdateAsync(car, cancellationToken);
         return ToDto(car);
     }
 
     /// <summary>
     /// Удаляет автомобиль.
     /// </summary>
-    /// <param name="id">Идентификатор автомобиля.</param>
-    /// <returns>True, если удаление успешно, иначе False.</returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        return carRepository.Delete(id);
+        return await carRepository.DeleteAsync(id, cancellationToken);
     }
 
-    /// <summary>
-    /// Преобразует сущность автомобиля в DTO.
-    /// </summary>
-    /// <param name="c">Сущность автомобиля.</param>
-    /// <returns>DTO автомобиля.</returns>
     private static CarDto ToDto(Car c)
     {
         return new CarDto(c.Id, c.LicensePlate, c.Brand, c.Category, c.ClientId);

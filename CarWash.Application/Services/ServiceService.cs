@@ -4,39 +4,35 @@ using CarWash.Application.Contracts.Repositories;
 using CarWash.Domain.Entities;
 using CarWash.Domain.Enums;
 
-namespace CarWash.Api.Services;
+namespace CarWash.Application.Services;
 
 /// <summary>
-/// Реализация сервиса для управления услугами автомойки.
+/// Реализация сервиса для управления услугами.
 /// </summary>
 public class ServiceService(IServiceRepository repository) : IServiceService
 {
     /// <summary>
     /// Возвращает список всех услуг.
     /// </summary>
-    /// <returns>Коллекция услуг.</returns>
-    public IReadOnlyCollection<ServiceDto> GetAll()
+    public async Task<IReadOnlyCollection<ServiceDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return [.. repository.GetAll().Select(ToDto)];
+        var services = await repository.GetAllAsync(cancellationToken);
+        return [.. services.Select(ToDto)];
     }
 
     /// <summary>
     /// Возвращает услугу по идентификатору.
     /// </summary>
-    /// <param name="id">Идентификатор услуги.</param>
-    /// <returns>Услуга или null, если не найдена.</returns>
-    public ServiceDto? GetById(int id)
+    public async Task<ServiceDto?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var service = repository.GetById(id);
+        var service = await repository.GetByIdAsync(id, cancellationToken);
         return service is null ? null : ToDto(service);
     }
 
     /// <summary>
     /// Создает новую услугу.
     /// </summary>
-    /// <param name="dto">Данные новой услуги.</param>
-    /// <returns>Созданная услуга.</returns>
-    public ServiceDto Create(ServiceCreateUpdateDto dto)
+    public async Task<ServiceDto> CreateAsync(ServiceCreateUpdateDto dto, CancellationToken cancellationToken)
     {
         var service = new Service
         {
@@ -46,19 +42,16 @@ public class ServiceService(IServiceRepository repository) : IServiceService
             DurationMinutes = dto.DurationMinutes
         };
 
-        var created = repository.Add(service);
+        var created = await repository.AddAsync(service, cancellationToken);
         return ToDto(created);
     }
 
     /// <summary>
     /// Обновляет существующую услугу.
     /// </summary>
-    /// <param name="id">Идентификатор услуги.</param>
-    /// <param name="dto">Новые данные услуги.</param>
-    /// <returns>Обновленная услуга.</returns>
-    public ServiceDto Update(int id, ServiceCreateUpdateDto dto)
+    public async Task<ServiceDto> UpdateAsync(int id, ServiceCreateUpdateDto dto, CancellationToken cancellationToken)
     {
-        var service = repository.GetById(id) 
+        var service = await repository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Услуга с Id {id} не найдена.");
 
         service.Name = dto.Name;
@@ -66,35 +59,23 @@ public class ServiceService(IServiceRepository repository) : IServiceService
         service.Price = dto.Price;
         service.DurationMinutes = dto.DurationMinutes;
 
-        repository.Update(service);
+        await repository.UpdateAsync(service, cancellationToken);
         return ToDto(service);
     }
 
     /// <summary>
     /// Удаляет услугу.
     /// </summary>
-    /// <param name="id">Идентификатор услуги.</param>
-    /// <returns>True, если удаление успешно, иначе False.</returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        return repository.Delete(id);
+        return await repository.DeleteAsync(id, cancellationToken);
     }
 
-    /// <summary>
-    /// Преобразует сущность услуги в DTO.
-    /// </summary>
-    /// <param name="s">Сущность услуги.</param>
-    /// <returns>DTO услуги.</returns>
     private static ServiceDto ToDto(Service s)
     {
         return new ServiceDto(s.Id, s.Name, s.Category.ToString(), s.Price, s.DurationMinutes);
     }
 
-    /// <summary>
-    /// Преобразует строковое представление категории в перечисление.
-    /// </summary>
-    /// <param name="category">Строковое представление категории.</param>
-    /// <returns>Значение перечисления CarCategory.</returns>
     private static CarCategory ParseCategory(string category)
     {
         if (!Enum.TryParse<CarCategory>(category, true, out var result)

@@ -14,16 +14,17 @@ public class CarsController(ICarService service, ILogger<CarsController> logger)
     /// <summary>
     /// Возвращает список всех автомобилей.
     /// </summary>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Коллекция автомобилей.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<CarDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IReadOnlyCollection<CarDto>> GetAll()
+    public async Task<ActionResult<IReadOnlyCollection<CarDto>>> GetAll(CancellationToken cancellationToken)
     {
         try
         {
             logger.LogInformation("Запрос на получение всех автомобилей.");
-            return Ok(service.GetAll());
+            return Ok(await service.GetAllAsync(cancellationToken));
         }
         catch (Exception ex)
         {
@@ -36,16 +37,17 @@ public class CarsController(ICarService service, ILogger<CarsController> logger)
     /// Возвращает автомобиль по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор автомобиля.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Автомобиль или 404, если не найден.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(CarDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<CarDto> GetById(int id)
+    public async Task<ActionResult<CarDto>> GetById(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var car = service.GetById(id);
+            var car = await service.GetByIdAsync(id, cancellationToken);
             if (car is null)
                 return NotFound(new { message = $"Автомобиль с Id {id} не найден." });
 
@@ -62,16 +64,17 @@ public class CarsController(ICarService service, ILogger<CarsController> logger)
     /// Создает новый автомобиль.
     /// </summary>
     /// <param name="dto">Данные нового автомобиля.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Созданный автомобиль.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(CarDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<CarDto> Create(CarCreateUpdateDto dto)
+    public async Task<ActionResult<CarDto>> Create(CarCreateUpdateDto dto, CancellationToken cancellationToken)
     {
         try
         {
-            var created = service.Create(dto);
+            var created = await service.CreateAsync(dto, cancellationToken);
             logger.LogInformation("Создан автомобиль с Id {Id}.", created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -92,17 +95,18 @@ public class CarsController(ICarService service, ILogger<CarsController> logger)
     /// </summary>
     /// <param name="id">Идентификатор автомобиля.</param>
     /// <param name="dto">Новые данные автомобиля.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Обновленный автомобиль.</returns>
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(CarDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<CarDto> Update(int id, CarCreateUpdateDto dto)
+    public async Task<ActionResult<CarDto>> Update(int id, CarCreateUpdateDto dto, CancellationToken cancellationToken)
     {
         try
         {
-            var updated = service.Update(id, dto);
+            var updated = await service.UpdateAsync(id, dto, cancellationToken);
             logger.LogInformation("Обновлен автомобиль с Id {Id}.", id);
             return Ok(updated);
         }
@@ -127,15 +131,16 @@ public class CarsController(ICarService service, ILogger<CarsController> logger)
     /// Удаляет автомобиль.
     /// </summary>
     /// <param name="id">Идентификатор автомобиля.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>204 No Content.</returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         try
         {
-            service.Delete(id);
+            await service.DeleteAsync(id, cancellationToken);
             logger.LogInformation("Удален автомобиль с Id {Id}.", id);
             return NoContent();
         }

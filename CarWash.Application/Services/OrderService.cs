@@ -3,7 +3,7 @@ using CarWash.Application.Contracts.Interfaces;
 using CarWash.Application.Contracts.Repositories;
 using CarWash.Domain.Entities;
 
-namespace CarWash.Api.Services;
+namespace CarWash.Application.Services;
 
 /// <summary>
 /// Реализация сервиса для управления заказами.
@@ -17,35 +17,31 @@ public class OrderService(
     /// <summary>
     /// Возвращает список всех заказов.
     /// </summary>
-    /// <returns>Коллекция заказов.</returns>
-    public IReadOnlyCollection<OrderDto> GetAll()
+    public async Task<IReadOnlyCollection<OrderDto>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return [.. orderRepository.GetAll().Select(ToDto)];
+        var orders = await orderRepository.GetAllAsync(cancellationToken);
+        return [.. orders.Select(ToDto)];
     }
 
     /// <summary>
     /// Возвращает заказ по идентификатору.
     /// </summary>
-    /// <param name="id">Идентификатор заказа.</param>
-    /// <returns>Заказ или null, если не найден.</returns>
-    public OrderDto? GetById(int id)
+    public async Task<OrderDto?> GetByIdAsync(int id, CancellationToken cancellationToken)
     {
-        var order = orderRepository.GetById(id);
+        var order = await orderRepository.GetByIdAsync(id, cancellationToken);
         return order is null ? null : ToDto(order);
     }
 
     /// <summary>
     /// Создает новый заказ.
     /// </summary>
-    /// <param name="dto">Данные нового заказа.</param>
-    /// <returns>Созданный заказ.</returns>
-    public OrderDto Create(OrderCreateUpdateDto dto)
+    public async Task<OrderDto> CreateAsync(OrderCreateUpdateDto dto, CancellationToken cancellationToken)
     {
-        var client = clientRepository.GetById(dto.ClientId) 
+        var client = await clientRepository.GetByIdAsync(dto.ClientId, cancellationToken)
             ?? throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
-        var car = carRepository.GetById(dto.CarId) 
+        var car = await carRepository.GetByIdAsync(dto.CarId, cancellationToken)
             ?? throw new ArgumentException($"Автомобиль с Id {dto.CarId} не найден.");
-        var service = serviceRepository.GetById(dto.ServiceId) 
+        var service = await serviceRepository.GetByIdAsync(dto.ServiceId, cancellationToken)
             ?? throw new ArgumentException($"Услуга с Id {dto.ServiceId} не найдена.");
 
         var order = new Order
@@ -57,26 +53,23 @@ public class OrderService(
             BoxNumber = dto.BoxNumber
         };
 
-        var created = orderRepository.Add(order);
+        var created = await orderRepository.AddAsync(order, cancellationToken);
         return ToDto(created);
     }
 
     /// <summary>
     /// Обновляет существующий заказ.
     /// </summary>
-    /// <param name="id">Идентификатор заказа.</param>
-    /// <param name="dto">Новые данные заказа.</param>
-    /// <returns>Обновленный заказ.</returns>
-    public OrderDto Update(int id, OrderCreateUpdateDto dto)
+    public async Task<OrderDto> UpdateAsync(int id, OrderCreateUpdateDto dto, CancellationToken cancellationToken)
     {
-        var order = orderRepository.GetById(id) 
+        var order = await orderRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new KeyNotFoundException($"Заказ с Id {id} не найден.");
 
-        var client = clientRepository.GetById(dto.ClientId) 
+        var client = await clientRepository.GetByIdAsync(dto.ClientId, cancellationToken)
             ?? throw new ArgumentException($"Клиент с Id {dto.ClientId} не найден.");
-        var car = carRepository.GetById(dto.CarId) 
+        var car = await carRepository.GetByIdAsync(dto.CarId, cancellationToken)
             ?? throw new ArgumentException($"Автомобиль с Id {dto.CarId} не найден.");
-        var service = serviceRepository.GetById(dto.ServiceId) 
+        var service = await serviceRepository.GetByIdAsync(dto.ServiceId, cancellationToken)
             ?? throw new ArgumentException($"Услуга с Id {dto.ServiceId} не найдена.");
 
         order.Client = client;
@@ -85,25 +78,18 @@ public class OrderService(
         order.StartTime = dto.StartTime;
         order.BoxNumber = dto.BoxNumber;
 
-        orderRepository.Update(order);
+        await orderRepository.UpdateAsync(order, cancellationToken);
         return ToDto(order);
     }
 
     /// <summary>
     /// Удаляет заказ.
     /// </summary>
-    /// <param name="id">Идентификатор заказа.</param>
-    /// <returns>True, если удаление успешно, иначе False.</returns>
-    public bool Delete(int id)
+    public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
     {
-        return orderRepository.Delete(id);
+        return await orderRepository.DeleteAsync(id, cancellationToken);
     }
 
-    /// <summary>
-    /// Преобразует сущность заказа в DTO.
-    /// </summary>
-    /// <param name="o">Сущность заказа.</param>
-    /// <returns>DTO заказа.</returns>
     private static OrderDto ToDto(Order o)
     {
         return new OrderDto(o.Id, o.Client.Id, o.Service.Id, o.Car.Id, o.StartTime, o.BoxNumber);

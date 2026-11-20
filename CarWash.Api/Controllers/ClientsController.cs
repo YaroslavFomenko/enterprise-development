@@ -14,16 +14,17 @@ public class ClientsController(IClientService service, ILogger<ClientsController
     /// <summary>
     /// Возвращает список всех клиентов.
     /// </summary>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Коллекция клиентов.</returns>
     [HttpGet]
     [ProducesResponseType(typeof(IReadOnlyCollection<ClientDto>), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<IReadOnlyCollection<ClientDto>> GetAll()
+    public async Task<ActionResult<IReadOnlyCollection<ClientDto>>> GetAll(CancellationToken cancellationToken)
     {
         try
         {
             logger.LogInformation("Запрос на получение списка клиентов.");
-            return Ok(service.GetAll());
+            return Ok(await service.GetAllAsync(cancellationToken));
         }
         catch (Exception ex)
         {
@@ -36,16 +37,17 @@ public class ClientsController(IClientService service, ILogger<ClientsController
     /// Возвращает клиента по идентификатору.
     /// </summary>
     /// <param name="id">Идентификатор клиента.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Клиент или 404, если не найден.</returns>
     [HttpGet("{id:int}")]
     [ProducesResponseType(typeof(ClientDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<ClientDto> GetById(int id)
+    public async Task<ActionResult<ClientDto>> GetById(int id, CancellationToken cancellationToken)
     {
         try
         {
-            var client = service.GetById(id);
+            var client = await service.GetByIdAsync(id, cancellationToken);
             if (client is null)
                 return NotFound(new { message = $"Клиент с Id {id} не найден." });
 
@@ -62,16 +64,17 @@ public class ClientsController(IClientService service, ILogger<ClientsController
     /// Создает нового клиента.
     /// </summary>
     /// <param name="dto">Данные нового клиента.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Созданный клиент.</returns>
     [HttpPost]
     [ProducesResponseType(typeof(ClientDto), StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<ClientDto> Create(ClientCreateUpdateDto dto)
+    public async Task<ActionResult<ClientDto>> Create(ClientCreateUpdateDto dto, CancellationToken cancellationToken)
     {
         try
         {
-            var created = service.Create(dto);
+            var created = await service.CreateAsync(dto, cancellationToken);
             logger.LogInformation("Создан клиент с Id {Id}.", created.Id);
             return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
         }
@@ -92,17 +95,18 @@ public class ClientsController(IClientService service, ILogger<ClientsController
     /// </summary>
     /// <param name="id">Идентификатор клиента.</param>
     /// <param name="dto">Новые данные клиента.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>Обновленный клиент.</returns>
     [HttpPut("{id:int}")]
     [ProducesResponseType(typeof(ClientDto), StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public ActionResult<ClientDto> Update(int id, ClientCreateUpdateDto dto)
+    public async Task<ActionResult<ClientDto>> Update(int id, ClientCreateUpdateDto dto, CancellationToken cancellationToken)
     {
         try
         {
-            var updated = service.Update(id, dto);
+            var updated = await service.UpdateAsync(id, dto, cancellationToken);
             logger.LogInformation("Обновлен клиент с Id {Id}.", id);
             return Ok(updated);
         }
@@ -127,15 +131,16 @@ public class ClientsController(IClientService service, ILogger<ClientsController
     /// Удаляет клиента.
     /// </summary>
     /// <param name="id">Идентификатор клиента.</param>
+    /// <param name="cancellationToken">Сигнал отмены запроса.</param>
     /// <returns>204 No Content.</returns>
     [HttpDelete("{id:int}")]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-    public IActionResult Delete(int id)
+    public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
     {
         try
         {
-            service.Delete(id);
+            await service.DeleteAsync(id, cancellationToken);
             logger.LogInformation("Удален клиент с Id {Id}.", id);
             return NoContent();
         }

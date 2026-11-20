@@ -10,25 +10,25 @@ public interface IAnalyticsService
     /// <summary>
     /// Топ-5 клиентов по посещениям.
     /// </summary>
-    public IReadOnlyCollection<TopClientDto> GetTop5Clients();
+    public Task<IReadOnlyCollection<TopClientDto>> GetTop5ClientsAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Автомобили на мойке в указанный момент.
     /// </summary>
-    public IReadOnlyCollection<CarDto> GetCarsInWash(DateTime? moment);
+    public Task<IReadOnlyCollection<CarDto>> GetCarsInWashAsync(DateTime? moment, CancellationToken cancellationToken);
 
     /// <summary>
     /// Топ-5 услуг.
     /// </summary>
-    public IReadOnlyCollection<ServiceDto> GetTop5Services();
+    public Task<IReadOnlyCollection<ServiceDto>> GetTop5ServicesAsync(CancellationToken cancellationToken);
 
     /// <summary>
     /// Время освобождения бокса.
     /// </summary>
-    public DateTime GetBoxReleaseTime(int boxNumber, DateTime? fromMoment);
+    public Task<DateTime> GetBoxReleaseTimeAsync(int boxNumber, DateTime? fromMoment, CancellationToken cancellationToken);
 
     /// <summary>
     /// Выручка по услугам.
     /// </summary>
-    public IReadOnlyCollection<RevenueByServiceDto> GetRevenueByService();
+    public Task<IReadOnlyCollection<RevenueByServiceDto>> GetRevenueByServiceAsync(CancellationToken cancellationToken);
 }
