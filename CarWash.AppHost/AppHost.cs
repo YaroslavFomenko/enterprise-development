@@ -5,7 +5,6 @@ var carwashDb = postgres.AddDatabase("carwash");
 
 builder.AddProject<Projects.CarWash_Api>("api")
     .WithReference(carwashDb)
-    .WaitFor(carwashDb)
-    .WithHttpHealthCheck("/health");
+    .WaitFor(carwashDb);
 
 builder.Build().Run();
