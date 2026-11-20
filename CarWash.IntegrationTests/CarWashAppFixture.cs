@@ -31,8 +31,10 @@ public class CarWashAppFixture : IAsyncLifetime
         builder.Configuration["AppHost:FilePath"] = string.Empty;
         _app = await builder.BuildAsync(timeout.Token);
         await _app.StartAsync(timeout.Token);
+        
+        await Task.Delay(TimeSpan.FromSeconds(10), timeout.Token);
 
-        Client = _app.CreateHttpClient("api", "http");
+        Client = _app.CreateHttpClient("api");
         ConnectionString = await _app.GetConnectionStringAsync("carwash", timeout.Token)
                            ?? throw new InvalidOperationException("Нет строки подключения к тестовой БД.");
     }
