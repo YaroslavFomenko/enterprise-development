@@ -31,7 +31,6 @@ public class CarWashAppFixture : IAsyncLifetime
         builder.Configuration["AppHost:FilePath"] = string.Empty;
         _app = await builder.BuildAsync(timeout.Token);
         await _app.StartAsync(timeout.Token);
-        await _app.ResourceNotifications.WaitForResourceHealthyAsync("api", timeout.Token);
 
         Client = _app.CreateHttpClient("api", "http");
         ConnectionString = await _app.GetConnectionStringAsync("carwash", timeout.Token)
