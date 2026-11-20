@@ -1,13 +1,11 @@
-name: .NET Tests
-
+name: Tests
 on:
   push:
-    branches: [ main, lab1, lab2 ]
+    branches: [main, lab1, lab2, lab3]
   pull_request:
-    branches: [ main ]
-
+    branches: [main]
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -16,7 +14,7 @@ jobs:
           dotnet-version: '10.0.x'
       - name: Restore dependencies
         run: dotnet restore CarWash.sln
-      - name: Build
-        run: dotnet build CarWash.sln --no-restore
-      - name: Test
-        run: dotnet test CarWash.sln --no-build --verbosity normal
+      - name: Set up Aspire
+        run: dnx --yes aspire.cli@13.6.5 -- --nologo setup
+      - name: Run tests
+        run: dotnet test CarWash.sln --configuration Release --no-restore
